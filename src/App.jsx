@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import VerifyOtp from "./pages/VerifyOtp";
 
 const App = () => {
   return (
@@ -9,8 +10,7 @@ const App = () => {
       {/* 🔓 Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-
-      {/* 🔐 Protected routes */}
+      <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/" element={<Home />} />
     </Routes>
   );
