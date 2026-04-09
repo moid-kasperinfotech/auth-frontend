@@ -60,22 +60,10 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
-<<<<<<< HEAD
     }finally{
-=======
-    } finally {
->>>>>>> 3763f4b (login issue fix)
       setLoading(false);
     }
   };
-
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-  //       <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
