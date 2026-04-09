@@ -55,12 +55,16 @@ const Login = () => {
 
       if (res.status === 200) {
         await fetchUser();
-        toast.success(res?.data?.data?.message || "Login successful");
+        toast.success(res?.data?.message || "Login successful");
         navigate("/");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
+<<<<<<< HEAD
     }finally{
+=======
+    } finally {
+>>>>>>> 3763f4b (login issue fix)
       setLoading(false);
     }
   };

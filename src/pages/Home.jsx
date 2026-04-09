@@ -8,7 +8,8 @@ const Home = () => {
 
   const handleLogout = async () => {
     await logout();
-    toast.success("Logged out successfully");
+    toast.success("Logout successful");
+    navigate("/", { replace: true });
   };
 
   // ✅ GLOBAL LOADING SCREEN (no flicker)

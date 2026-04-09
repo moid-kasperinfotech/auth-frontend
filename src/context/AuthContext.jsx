@@ -8,8 +8,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const fetchUser = async () => {
-    setLoading(true);
+  // ✅ Fetch user
+  const fetchUser = async (showLoader = true) => {
+    if (showLoader) setLoading(true);
+
     try {
       const { data } = await api.get("/auth/me");
       setUser(data);
@@ -19,11 +21,11 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
     } finally {
-      setLoading(false);
+      if (showLoader) setLoading(false);
     }
   };
 
-  // ✅ LOGOUT FUNCTION
+  // ✅ Logout
   const logout = async () => {
     try {
       await api.post("/auth/logout");
@@ -35,8 +37,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ INIT AUTH (🔥 MOST IMPORTANT FIX)
   useEffect(() => {
-    fetchUser();
+    const initAuth = async () => {
+      try {
+        await api.post("/auth/refresh-token"); // first try refresh
+      } catch (e) {
+        console.log(e);
+        // ignore if no refresh token
+      }
+
+      await fetchUser(false); // then fetch user (no loader flicker)
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   return (
@@ -54,7 +69,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// hook
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);

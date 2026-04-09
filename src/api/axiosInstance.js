@@ -8,10 +8,10 @@ const api = axios.create({
 let isRefreshing = false;
 let failedQueue = [];
 
-const processQueue = (error, token = null) => {
+const processQueue = (error) => {
   failedQueue.forEach((prom) => {
     if (error) prom.reject(error);
-    else prom.resolve(token);
+    else prom.resolve();
   });
   failedQueue = [];
 };
@@ -21,7 +21,13 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // 🔥 Ignore auth routes
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/auth/login") &&
+      !originalRequest.url.includes("/auth/refresh-token")
+    ) {
       originalRequest._retry = true;
 
       if (isRefreshing) {
@@ -33,20 +39,23 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await api.post("/auth/refresh-token"); // 🔥 refresh token API
+        await api.post("/auth/refresh-token");
+
         processQueue(null);
-        return api(originalRequest); // retry original request
-      } catch (error) {
-        processQueue(error, null);
-        window.location.href = "/login"; // logout fallback
-        return Promise.reject(error);
+
+        return api(originalRequest); // retry request
+      } catch (err) {
+        processQueue(err);
+
+        // ❌ DO NOT use window.location.href
+        return Promise.reject(err);
       } finally {
         isRefreshing = false;
       }
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;
