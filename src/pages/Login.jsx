@@ -9,9 +9,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { fetchUser, isAuthenticated, loading } = useAuth();
+  const { fetchUser, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -47,6 +48,7 @@ const Login = () => {
     if (!validate()) return;
 
     const payload = { identifier, password };
+    setLoading(true);
 
     try {
       const res = await api.post("/auth/login", payload);
@@ -58,16 +60,18 @@ const Login = () => {
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
+    }finally{
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+  //       <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

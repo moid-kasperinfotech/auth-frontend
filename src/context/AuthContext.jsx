@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setUser(null);
       setIsAuthenticated(false);
-      setLoading(false)
     }
   };
 
